@@ -25,6 +25,11 @@ export default function MapOnlyPage() {
   const [currentScene, setCurrentScene] = useState<Scene | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
 
+  // Visibility toggles
+  const [showPhotos, setShowPhotos] = useState(true);
+  const [showSceneDetails, setShowSceneDetails] = useState(true);
+  const [showMap, setShowMap] = useState(true);
+
   const s = useMemo(() => Number(season ?? 0), [season]);
   const e = useMemo(() => Number(episode ?? 0), [episode]);
 
@@ -107,6 +112,48 @@ export default function MapOnlyPage() {
         Map & Scene — S{s}E{e}
       </h1>
 
+      {/* ⚙️ Display settings */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 12,
+          padding: 10,
+          border: '1px solid #333',
+          borderRadius: 8,
+          background: '#111',
+          color: '#ddd',
+          fontSize: 13,
+        }}
+      >
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={showPhotos}
+            onChange={() => setShowPhotos(!showPhotos)}
+          />
+          Show character photos
+        </label>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={showSceneDetails}
+            onChange={() => setShowSceneDetails(!showSceneDetails)}
+          />
+          Show scene start / end / duration
+        </label>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <input
+            type="checkbox"
+            checked={showMap}
+            onChange={() => setShowMap(!showMap)}
+          />
+          Show map
+        </label>
+      </div>
+
       {/* Current scene header */}
       <div
         style={{
@@ -118,24 +165,30 @@ export default function MapOnlyPage() {
           background: '#0b0b0b'
         }}
       >
-        <div style={{ fontSize: 14, opacity: 0.75 }}>
-          {currentScene
-            ? `Scene ${currentScene.sceneStart} – ${currentScene.sceneEnd} • ${currentScene.location}${currentScene.subLocation ? ' / ' + currentScene.subLocation : ''}`
-            : 'Waiting for player… open the Player tab and start playback.'}
-        </div>
+        {showSceneDetails && (
+          <div style={{ fontSize: 14, opacity: 0.75 }}>
+            {currentScene
+              ? `Scene ${currentScene.sceneStart} – ${currentScene.sceneEnd} • ${currentScene.location}${currentScene.subLocation ? ' / ' + currentScene.subLocation : ''}`
+              : 'Waiting for player… open the Player tab and start playback.'}
+          </div>
+        )}
 
-        <SceneInfo
-          sceneLocation={currentScene?.location}
-          characters={currentScene?.characters ?? []}
-          charactersIndex={charactersIndex}
-          showPhotos={true} // you can wire this to your checkboxes
-        />
+        {showPhotos && (
+          <SceneInfo
+            sceneLocation={currentScene?.location}
+            characters={currentScene?.characters ?? []}
+            charactersIndex={charactersIndex}
+            showPhotos={true} // you can wire this to your checkboxes
+          />
+        )}
       </div>
 
       {/* Map */}
-      <div style={{ marginTop: 12, border: '1px solid #222', borderRadius: 12, overflow: 'hidden' }}>
-        <MapView center={center} label={currentScene?.subLocation || currentScene?.location || '—'} />
-      </div>
+      {showMap && (
+        <div style={{ marginTop: 12, border: '1px solid #222', borderRadius: 12, overflow: 'hidden' }}>
+          <MapView center={center} label={currentScene?.subLocation || currentScene?.location || '—'} />
+        </div>
+      )}
     </div>
   );
 }

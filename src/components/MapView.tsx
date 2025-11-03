@@ -31,10 +31,11 @@ const DynamicMap = dynamic(
       const showMarker = !!center
 
       // derive colors based on sliders (0–1)
-      const landBase = Math.floor(20 * landDarkness)
+      const landBase = Math.floor(255 * landDarkness)
       const fillColor = `rgb(${landBase}, ${landBase}, ${landBase})`
       const borderColor = `rgb(${30 + landBase}, ${30 + landBase}, ${30 + landBase})`
-      const waterBg = `rgb(${Math.floor(10 * waterDarkness)}, ${Math.floor(10 * waterDarkness)}, ${Math.floor(10 * waterDarkness)})`
+      const waterBase = Math.floor(0 * waterDarkness)
+      const waterBg = `rgb(${waterBase}, ${waterBase}, ${waterBase})`
 
       return (
         <div
@@ -67,7 +68,7 @@ const DynamicMap = dynamic(
                 color: borderColor,
                 weight: 0.5,
                 fillColor,
-                fillOpacity: 1
+                fillOpacity: 0.5
               })}
             />
 
@@ -137,6 +138,7 @@ export default function MapView({ center, label }: Props) {
   const [placesData, setPlacesData] = useState<any>(null)
 
   // new state for customization
+  const [showLand, setShowLand] = useState(false)
   const [landDarkness, setLandDarkness] = useState(1)
   const [waterDarkness, setWaterDarkness] = useState(1)
 
@@ -171,31 +173,40 @@ export default function MapView({ center, label }: Props) {
           fontSize: 13,
         }}
       >
-        <label style={{ flex: 1 }}>
-          🌍 Land darkness
-          <input
-            type="range"
-            min="0.3"
-            max="1"
-            step="0.05"
-            value={landDarkness}
-            onChange={(e) => setLandDarkness(parseFloat(e.target.value))}
-            style={{ width: '100%' }}
-          />
-        </label>
 
-        <label style={{ flex: 1 }}>
-          🌊 Water darkness
-          <input
-            type="range"
-            min="0.3"
-            max="1"
-            step="0.05"
-            value={waterDarkness}
-            onChange={(e) => setWaterDarkness(parseFloat(e.target.value))}
-            style={{ width: '100%' }}
-          />
-        </label>
+        {/* LAND */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <button
+            onClick={() => setShowLand((prev) => !prev)}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              background: 'none',
+              border: 'none',
+              color: '#ddd',
+              fontWeight: 600,
+              cursor: 'pointer',
+              padding: '4px 0',
+            }}
+          >
+            🌍 Land darkness
+            <span style={{ opacity: 0.5 }}>{showLand ? '▾' : '▸'}</span>
+          </button>
+
+          {showLand && (
+            <input
+              type="range"
+              min="0.3"
+              max="1"
+              step="0.05"
+              value={landDarkness}
+              onChange={(e) => setLandDarkness(parseFloat(e.target.value))}
+              style={{ width: '100%' }}
+            />
+          )}
+        </div>
+
       </div>
 
       {/* 🗺️ Dark map */}
