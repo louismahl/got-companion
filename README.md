@@ -6,8 +6,6 @@
 
 ## 🩸 Demo Screenshot
 
-*(Add your screenshot or GIF here)*
-
 ![Demo screenshot](public/demo.png)
 
 ---
